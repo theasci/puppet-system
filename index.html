@@ -347,15 +347,15 @@ and mounttab types.</p>
 
 <ul>
 <li>
-<p>When requiring classes in other modules wrap them in an "if !defined" check
+<p>When requiring packages in other modules wrap them in an "if !defined" check
 to avoid conflicts with system::packages - for example:</p>
 
 <p>if ! defined(Package['bash']) { package { 'bash': ensure =&gt; installed } }</p>
 </li>
 <li><p>Put the system class <em>first</em> in the list of classes to include when using
 hiera_include. This avoids problems with conflicting package declarations -
-which shouldn't be a problem because system::packages run in an earlier run
-stage but is.</p></li>
+which shouldn't be a problem because system::packages is run in an earlier 
+run stage but is.</p></li>
 <li><p>As with many default types you can often specify a 'target' parameter to
 specify a different configuration filename to change.</p></li>
 </ul><h2>Support</h2>
