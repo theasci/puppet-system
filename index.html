@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Puppet-system : Manage Linux system resources and services from hiera configuration" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Puppet-system</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/erwbgy/puppet-system">View on GitHub</a>
+
+          <h1 id="project_title">Puppet-system</h1>
+          <h2 id="project_tagline">Manage Linux system resources and services from hiera configuration</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/erwbgy/puppet-system/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/erwbgy/puppet-system/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>puppet-system</h1>
+
+<p>Manage Linux system resources and services from hiera configuration.</p>
+
+<ul>
+<li>
+<em>groups</em>: manage entries in /etc/group</li>
+<li>
+<em>hosts</em>: manage entries in /etc/hosts</li>
+<li>
+<em>limits</em>: manage entries in /etc/security/limits.conf</li>
+<li>
+<em>mailaliases</em> manage entries in /etc/aliases</li>
+<li>
+<em>mounts</em>: manage entries in /etc/fstab</li>
+<li>
+<em>packages</em>: manage system packages</li>
+<li>
+<em>services</em>: manage system services</li>
+<li>
+<em>sshd</em>: manage configuration in /etc/ssh/sshd_config including subsystems like sftp</li>
+<li>
+<em>systcl</em>: manage entries in /etc/sysctl.conf</li>
+<li>
+<em>users</em>: manage users in /etc/passwd and /etc/shadow</li>
+<li>
+<em>yumrepos</em>: manage yum repository files under /etc/yum.repos.d</li>
+</ul><h2>Documentation</h2>
+
+<p>For default types (users, groups, mounts, yumrepos, packages) see the
+documentation at <a href="http://docs.puppetlabs.com/references/latest/type.html">http://docs.puppetlabs.com/references/latest/type.html</a> for the
+parameters that can be passed to each of the resources.</p>
+
+<p>For augeasproviders types (sysctl, syslog, sshd) see
+<a href="http://forge.puppetlabs.com/domcleal/augeasproviders">http://forge.puppetlabs.com/domcleal/augeasproviders</a>.</p>
+
+<p>For limits see <a href="http://forge.puppetlabs.com/erwbgy/limits">http://forge.puppetlabs.com/erwbgy/limits</a>.</p>
+
+<h2>Usage</h2>
+
+<p>Include the system module in your puppet configuration:</p>
+
+<pre><code>include system
+</code></pre>
+
+<p>and add required hiera configuration.</p>
+
+<h2>groups</h2>
+
+<p>Managed entries in /etc/group</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  groups:
+    'keith':
+      ensure: 'present'
+      gid:    '500'
+    'fred':
+      gid:    '503'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: present</li>
+</ul><h2>hosts</h2>
+
+<p>Manage entries in /etc/hosts</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  hosts:
+    puppet:
+      ensure:       'present'
+      ip:           '10.5.11.19'
+      host_aliases: [ 'puppet.local' ]
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: present</li>
+</ul><p>See: <a href="http://docs.puppetlabs.com/references/latest/type.html#host">http://docs.puppetlabs.com/references/latest/type.html#host</a></p>
+
+<h2>limits</h2>
+
+<p>Manages entries in /etc/security/limits.conf</p>
+
+<p>Example configuration:</p>
+
+<pre><code> system:
+   limits:
+     '*':
+       item: 'nofile'
+       soft: '2048'
+       hard: '8192'
+     '@mygroup':
+       item: 'nproc'
+       soft: '20'
+       hard: '50'
+</code></pre>
+
+<p>No defaults.</p>
+
+<h2>mailaliases</h2>
+
+<p>Manage entries in /etc/aliases</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  mailaliases:
+    postmaster:
+      recipient: 'root'
+    webmaster:
+      recipient: 'fred@domain.com'
+</code></pre>
+
+<p>No defaults.</p>
+
+<p>See: <a href="http://docs.puppetlabs.com/references/latest/type.html#mailalias">http://docs.puppetlabs.com/references/latest/type.html#mailalias</a></p>
+
+<h2>mounts</h2>
+
+<p>Manage entries in /etc/fstab</p>
+
+<p><em>NOTE: The mounts configuration will change when support is added for the
+mountpoint and mounttab types.</em></p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  mounts:
+    '/home':
+      ensure:  'mounted'
+      device:  '/dev/mapper/vg_x120-lv_home'
+      atboot:  'true'
+      fstype:  'ext4'
+      options: 'defaults'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>atboot: true</li>
+<li>ensure: mounted</li>
+</ul><h2>packages</h2>
+
+<p>Manage system packages</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  packages:
+    AdobeReader_enu:
+      ensure: '9.5.1-1'
+    ConsoleKit:
+      ensure: '0.4.5-2.fc17'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: installed</li>
+</ul><h2>services</h2>
+
+<p>Manage system services</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  services:
+    cups:
+      ensure: 'stopped'
+      enable: 'false'
+    sshd:
+      ensure: 'running'
+      enable: 'true'
+    ntpd:
+      ensure: 'running'
+      enable: 'true'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: running</li>
+</ul><p>Note:</p>
+
+<ul>
+<li>Do not specify any services that are managed by other Puppet modules (eg.
+ntpd or network) otherwise you may get conflicts</li>
+</ul><h2>sshd</h2>
+
+<p>Manage settings in /etc/ssh/sshd.conf</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  sshd:
+    config:
+      AllowGroups: [ 'sshusers', 'admin' ]
+      PermitRootLogin:
+        value:     'without-password'
+        condition: 'Host example.net'
+    subsystem:
+      sftp:
+        command: '/usr/libexec/openssh/sftp-server -u 0002'
+</code></pre>
+
+<p>No defaults.</p>
+
+<p>See:</p>
+
+<ul>
+<li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config.rb</a></li>
+<li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config_subsystem.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config_subsystem.rb</a></li>
+</ul><h2>sysctl</h2>
+
+<p>Manage settings in /etc/sysctl.conf</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  sysctl:
+    kernel.msgmnb:
+      value: '131072'
+      comment: 'Controls the default maxmimum size of a message queue'
+    kernel.msgmax:
+      value: '131072'
+      comment: ' Controls the maximum size of a message, in bytes'
+</code></pre>
+
+<p>No defaults.</p>
+
+<p>See:</p>
+
+<ul>
+<li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sysctl.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sysctl.rb</a></li>
+</ul><h2>users</h2>
+
+<p>Manages users entries in /etc/passwd and /etc/shadow</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  users:
+    'keith':
+      ensure:    'present'
+      comment:   'Keith Burdis'
+      gid:       '500'
+      groups:    ['wheel']
+      home:      '/home/keith'
+      shell:     '/bin/bash'
+      uid:       '500'
+    'fred':
+      comment:   'Fred Bloggs'
+      uid:       '503'
+      gid:       '503'
+      home:      '/home/fred'
+      managehome: true
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: present</li>
+<li>shell:  /bin/bash</li>
+</ul><h2>yumrepos</h2>
+
+<p>Managed yum repository files under /etc/yum.repos.d</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  yumrepos:
+    'puppetlabs-deps':
+      baseurl:  'http://yum.puppetlabs.com/fedora/f17/dependencies/$basearch'
+      descr:    'Puppet Labs Dependencies Fedora 17 - $basearch'
+      enabled:  '1'
+      gpgcheck: '1'
+      gpgkey:   'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs'
+    'puppetlabs-products':
+      baseurl:  'http://yum.puppetlabs.com/fedora/f17/products/$basearch'
+      descr:    'Puppet Labs Products Fedora 17 - $basearch'
+      enabled:  '1'
+      gpgcheck: '1'
+      gpgkey:   'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>enabled: 1</li>
+<li>gpgcheck: 1</li>
+</ul><h2>providers</h2>
+
+<p>The augeasproviders module can be an alternate provider for the host, mailalias
+and mounttab types.</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system:
+  providers:
+    host: 'augeas'
+    mailalias: 'augeas'
+    mounttab: 'augeas'
+</code></pre>
+
+<h2>Notes</h2>
+
+<ul>
+<li>
+<p>When requiring classes in other modules wrap them in an "if !defined" check
+to avoid conflicts with system::packages - for example:</p>
+
+<p>if ! defined(Package['bash']) { package { 'bash': ensure =&gt; installed } }</p>
+</li>
+<li><p>Put the system class <em>first</em> in the list of classes to include when using
+hiera_include. This avoids problems with conflicting package declarations -
+which shouldn't be a problem because system::packages run in an earlier run
+stage but is.</p></li>
+<li><p>As with many default types you can often specify a 'target' parameter to
+specify a different configuration filename to change.</p></li>
+</ul><h2>Support</h2>
+
+<p>License: Apache License, Version 2.0</p>
+
+<p>GitHub URL: <a href="https://github.com/erwbgy/puppet-system">https://github.com/erwbgy/puppet-system</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Puppet-system maintained by <a href="https://github.com/erwbgy">erwbgy</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
