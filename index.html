@@ -80,7 +80,7 @@ parameters that can be passed to each of the resources.</p>
 
 <h2>groups</h2>
 
-<p>Managed entries in /etc/group</p>
+<p>Manage entries in /etc/group</p>
 
 <p>Example configuration:</p>
 
@@ -119,7 +119,7 @@ parameters that can be passed to each of the resources.</p>
 
 <h2>limits</h2>
 
-<p>Manages entries in /etc/security/limits.conf</p>
+<p>Manage entries in /etc/security/limits.conf</p>
 
 <p>Example configuration:</p>
 
@@ -234,7 +234,8 @@ ntpd or network) otherwise you may get conflicts</li>
 <pre><code>system:
   sshd:
     config:
-      AllowGroups: [ 'sshusers', 'admin' ]
+      AllowGroups:
+        value:     [ 'sshusers', 'admin' ]
       PermitRootLogin:
         value:     'without-password'
         condition: 'Host example.net'
@@ -274,7 +275,7 @@ ntpd or network) otherwise you may get conflicts</li>
 <li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sysctl.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sysctl.rb</a></li>
 </ul><h2>users</h2>
 
-<p>Manages users entries in /etc/passwd and /etc/shadow</p>
+<p>Manage users entries in /etc/passwd and /etc/shadow</p>
 
 <p>Example configuration:</p>
 
@@ -303,7 +304,7 @@ ntpd or network) otherwise you may get conflicts</li>
 <li>shell:  /bin/bash</li>
 </ul><h2>yumrepos</h2>
 
-<p>Managed yum repository files under /etc/yum.repos.d</p>
+<p>Manage yum repository files under /etc/yum.repos.d</p>
 
 <p>Example configuration:</p>
 
