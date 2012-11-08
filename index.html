@@ -53,6 +53,8 @@
 <li>
 <em>sshd</em>: manage configuration in /etc/ssh/sshd_config including subsystems like sftp</li>
 <li>
+<em>sysconfig</em>: manage files under /etc/sysconfig: clock, i18n, keyboard, puppet-dashboard, puppet, puppetmaster, selinux</li>
+<li>
 <em>sysctl</em>: manage entries in /etc/sysctl.conf</li>
 <li>
 <em>users</em>: manage users in /etc/passwd and /etc/shadow</li>
@@ -251,7 +253,32 @@ ntpd or network) otherwise you may get conflicts</li>
 <ul>
 <li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config.rb</a></li>
 <li><a href="https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config_subsystem.rb">https://github.com/domcleal/augeasproviders/blob/master/lib/puppet/type/sshd_config_subsystem.rb</a></li>
-</ul><h2>sysctl</h2>
+</ul><h2>sysconfig</h2>
+
+<p>Manage settings in files under /etc/sysconfig</p>
+
+<p>Example configuration:</p>
+
+<pre><code>sysconfig:
+  clock:
+    timezone:     'Europe/London'
+  i18n:
+    # Run 'locale -a' to see possible lang values
+    lang:         'en_GB.utf8'
+  keyboard:
+    keytable:     'uk'
+    model:        'pc105'
+    layout:       'gb'
+    keyboardtype: 'pc'
+  puppet:
+    server:       'puppet.sbet'
+  selinux:
+    state:        'enforcing'
+</code></pre>
+
+<p>No defaults.</p>
+
+<h2>sysctl</h2>
 
 <p>Manage settings in /etc/sysctl.conf</p>
 
