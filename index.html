@@ -37,6 +37,8 @@
 
 <ul>
 <li>
+<em>facts</em>: set custom facts</li>
+<li>
 <em>groups</em>: manage entries in /etc/group</li>
 <li>
 <em>hosts</em>: manage entries in /etc/hosts</li>
@@ -59,6 +61,8 @@
 <li>
 <em>users</em>: manage users in /etc/passwd and /etc/shadow</li>
 <li>
+<em>yumgroups</em>: manage system package groups</li>
+<li>
 <em>yumrepos</em>: manage yum repository files under /etc/yum.repos.d</li>
 </ul><h2>Documentation</h2>
 
@@ -79,6 +83,17 @@ parameters that can be passed to each of the resources.</p>
 </code></pre>
 
 <p>and add required hiera configuration.</p>
+
+<h2>facts</h2>
+
+<p>Set custom facts</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::facts:
+  location:
+    value: 'London'
+</code></pre>
 
 <h2>groups</h2>
 
@@ -224,6 +239,8 @@ ntpd or network) otherwise you may get conflicts</li>
 
 <p>Manage settings in /etc/ssh/sshd.conf</p>
 
+<p>Synchronize host keys file entries across all puppet-managed hosts.</p>
+
 <p>Example configuration:</p>
 
 <pre><code>system::sshd:
@@ -236,6 +253,8 @@ ntpd or network) otherwise you may get conflicts</li>
 system::sshd::subsystem:
   sftp:
     command: '/usr/libexec/openssh/sftp-server -u 0002'
+
+system::sshd::sync_host_keys: 'true'
 </code></pre>
 
 <p>No defaults.</p>
@@ -282,7 +301,7 @@ system::sysconfig::selinux:
 <pre><code>system::sysctl:
   kernel.msgmnb:
     value: '131072'
-    comment: 'Controls the default maxmimum size of a message queue'
+    comment: 'Controls the default maximum size of a message queue'
   kernel.msgmax:
     value: '131072'
     comment: ' Controls the maximum size of a message, in bytes'
@@ -322,7 +341,20 @@ system::sysconfig::selinux:
 <ul>
 <li>ensure: present</li>
 <li>shell:  /bin/bash</li>
-</ul><h2>yumrepos</h2>
+</ul><h2>yumgroups</h2>
+
+<p>Manage system package groups</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::yumgroups:
+  'Base':
+    ensure: 'present'
+  'Console internet tools':
+    ensure: 'present'
+</code></pre>
+
+<h2>yumrepos</h2>
 
 <p>Manage yum repository files under /etc/yum.repos.d</p>
 
