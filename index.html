@@ -39,6 +39,8 @@
 <li>
 <em>facts</em>: set custom facts</li>
 <li>
+<em>files</em>: create/update files or directories</li>
+<li>
 <em>groups</em>: manage entries in /etc/group</li>
 <li>
 <em>hosts</em>: manage entries in /etc/hosts</li>
@@ -94,6 +96,34 @@ parameters that can be passed to each of the resources.</p>
   location:
     value: 'London'
 </code></pre>
+
+<h2>files</h2>
+
+<p>Create or update files or directories</p>
+
+<p>Example 1 - create a mount point for an NFS mounted directory:</p>
+
+<pre><code>system::files:
+  /apps:
+    ensure:  'directory'
+    owner:   'root'
+    group:   'root'
+    mode:    '0755'
+</code></pre>
+
+<p>Example 2 - create a file with the given content:</p>
+
+<pre><code>system::files:
+  /etc/motd:
+    ensure:  'present'
+    owner:   'root'
+    group:   'root'
+    mode:    '0644'
+    content: "Authorised access only\nIf unauthorised log off now or face prosecution\n"
+</code></pre>
+
+<p>Note: Use double-quotes with content if it contains embedded newlines (\n) or
+tabs (\t).  Normaly you will also want a terminating newline.</p>
 
 <h2>groups</h2>
 
@@ -172,9 +202,6 @@ parameters that can be passed to each of the resources.</p>
 
 <p>Manage entries in /etc/fstab</p>
 
-<p><em>NOTE: The mounts configuration will change when support is added for the
-mountpoint and mounttab types.</em></p>
-
 <p>Example configuration:</p>
 
 <pre><code>system::mounts:
@@ -191,7 +218,10 @@ mountpoint and mounttab types.</em></p>
 <ul>
 <li>atboot: true</li>
 <li>ensure: mounted</li>
-</ul><h2>packages</h2>
+</ul><p>Note: These resources are created last so any required users, groups or mount
+point directories have a chance to be created first.</p>
+
+<h2>packages</h2>
 
 <p>Manage system packages</p>
 
