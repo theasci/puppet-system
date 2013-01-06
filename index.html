@@ -37,6 +37,10 @@
 
 <ul>
 <li>
+<em>crontabs</em>: set user crontab entries</li>
+<li>
+<em>execs</em>:  run idempotent external commands</li>
+<li>
 <em>facts</em>: set custom facts</li>
 <li>
 <em>files</em>: create/update files or directories</li>
@@ -68,9 +72,9 @@
 <em>yumrepos</em>: manage yum repository files under /etc/yum.repos.d</li>
 </ul><h2>Documentation</h2>
 
-<p>For default types (users, groups, mounts, yumrepos, packages) see the
-documentation at <a href="http://docs.puppetlabs.com/references/latest/type.html">http://docs.puppetlabs.com/references/latest/type.html</a> for the
-parameters that can be passed to each of the resources.</p>
+<p>For default types (users, groups, mounts, yumrepos, packages, cron, exec) see
+the documentation at <a href="http://docs.puppetlabs.com/references/latest/type.html">http://docs.puppetlabs.com/references/latest/type.html</a> for
+the parameters that can be passed to each of the resources.</p>
 
 <p>For augeasproviders types (sysctl, sshd) see
 <a href="http://forge.puppetlabs.com/domcleal/augeasproviders">http://forge.puppetlabs.com/domcleal/augeasproviders</a>.</p>
@@ -85,6 +89,44 @@ parameters that can be passed to each of the resources.</p>
 </code></pre>
 
 <p>and add required hiera configuration.</p>
+
+<h2>crontabs</h2>
+
+<p>Set user crontab entries</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::crontabs:
+  'root-logrotate':
+    command: '/usr/sbin/logrotate'
+    user:    'root'
+    hour:    '2'
+    minute:  '0'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: present</li>
+<li>user: root</li>
+</ul><h2>execs</h2>
+
+<p>Run idempotent external commands</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::execs:
+  'update-tomcat-deploy':
+    command: '/usr/bin/svn up'
+    cwd:     '/apps/tomcat1/deploy'
+    user:    'tomcat1'
+  'create-deploy-dir':
+    command: '/bin/mkdir -p /apps/tomcat1/deploy'
+    unless:  '/usr/bin/test -d /apps/tomcat1/deploy'
+</code></pre>
+
+<p>Note: The commands will be run on every Puppet run unless you specify 'onlyif',
+'unless' or 'refreshonly' parameters.</p>
 
 <h2>facts</h2>
 
@@ -387,7 +429,22 @@ system::sysconfig::selinux:
     ensure: 'present'
   'Console internet tools':
     ensure: 'present'
+  'Perl Support':
+    ensure: 'present'
+    usecache: false
+  'Ruby Support':
+    ensure: 'present'
+    optional: true
+    usecache: false
 </code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>optional: false</li>
+<li>usecache: true</li>
+</ul><p>Note: Set 'usecache: false' if 'yum -C grouplist' does not work on your system
+and you are getting System::Yumgroup resources created on every Puppet run</p>
 
 <h2>yumrepos</h2>
 
