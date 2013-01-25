@@ -37,6 +37,8 @@
 
 <ul>
 <li>
+<em>augeas</em>: apply file changes using the augeas tool</li>
+<li>
 <em>crontabs</em>: set user crontab entries</li>
 <li>
 <em>execs</em>:  run idempotent external commands</li>
@@ -56,6 +58,8 @@
 <em>mounts</em>: manage entries in /etc/fstab</li>
 <li>
 <em>packages</em>: manage system packages</li>
+<li>
+<em>schedules</em>: determine when resource config should not be applied and how often</li>
 <li>
 <em>services</em>: manage system services</li>
 <li>
@@ -90,7 +94,51 @@ the parameters that can be passed to each of the resources.</p>
 
 <p>and add required hiera configuration.</p>
 
-<h2>crontabs</h2>
+<p>Note: To exclude certain system classes when doing 'include system' you can set
+their schedule parameter to 'never'.  This may be useful when testing or
+debugging issues or just to prevent config lower in the hierarchy being
+applied.</p>
+
+<p>For example:</p>
+
+<pre><code>system::packages::schedule:  'never'
+system::yumgroups::schedule: 'never'
+</code></pre>
+
+<p>will ignore any configuration for system::packages and system::yumgroups.</p>
+
+<h2>augeas</h2>
+
+<p>Apply changes to files using the augeas tool.  This enables configuration file
+changes to be made without writing new classes.</p>
+
+<p>Example 1:</p>
+
+<pre><code>system::augeas:
+  'test1':
+    context: '/files/etc/sysconfig/firstboot'
+    changes:
+      - 'set RUN_FIRSTBOOT YES'
+    onlyif:  'match other_value size &gt; 0'
+</code></pre>
+
+<p>Example 2:</p>
+
+<pre><code>system::augeas:
+  'jboss_conf':
+    content: '/files'
+    changes:
+      - 'set etc/jbossas/jbossas.conf/JBOSS_IP $ipaddress'
+      - 'set etc/jbossas/jbossas.conf/JAVA_HOME /usr'
+    load_path: '/usr/share/jbossas/lenses'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>ensure: present</li>
+<li>user: root</li>
+</ul><h2>crontabs</h2>
 
 <p>Set user crontab entries</p>
 
@@ -283,7 +331,65 @@ point directories have a chance to be created first.</p>
 
 <ul>
 <li>ensure: installed</li>
-</ul><h2>services</h2>
+</ul><h2>schedules</h2>
+
+<p>Create schedules that determine when a resource should not be applied and the
+number times it should be applied within a specified time period.</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::schedules:
+  'maintenance':
+    range:  '2 - 4'
+    period: 'daily'
+    repeat: 1
+  'half-hourly':
+    period: 'hourly'
+    repeat: 2
+</code></pre>
+
+<p>The defined schedules can then be passed using the 'schedule' parameter to
+other types.</p>
+
+<p>Example 1:</p>
+
+<pre><code>system::schedule: 'maintenance'
+</code></pre>
+
+<p>sets the default schedule for all system resources so that they are only
+run during the maintenance window of 2:00 to 04:59.</p>
+
+<p>Example 2:</p>
+
+<pre><code>system::services::schedule: 'daily'
+</code></pre>
+
+<p>sets the default schedule for all system::services resources to be once a day.</p>
+
+<p>Example 3:</p>
+
+<pre><code>system::services:
+  httpd:
+    ensure: 'running'
+    enable: 'true'
+    schedule: 'half-hourly'
+</code></pre>
+
+<p>overrides the services schedule for the httpd resource using a custom schedule
+we defined above.</p>
+
+<p>The default Puppet schedules are:</p>
+
+<ul>
+<li>daily</li>
+<li>hourly</li>
+<li>monthly</li>
+<li>never</li>
+<li>weekly</li>
+</ul><p>and the system::schedule class defines another called <em>always</em> that schedules
+the resource on every Puppet run.</p>
+
+<h2>services</h2>
 
 <p>Manage system services</p>
 
@@ -367,6 +473,8 @@ system::sysconfig::selinux:
 
 <p>No defaults.</p>
 
+<p>Note: Values must not contain whitespace</p>
+
 <h2>sysctl</h2>
 
 <p>Manage settings in /etc/sysctl.conf</p>
@@ -443,8 +551,15 @@ system::sysconfig::selinux:
 <ul>
 <li>optional: false</li>
 <li>usecache: true</li>
+<li>schedule: daily</li>
 </ul><p>Note: Set 'usecache: false' if 'yum -C grouplist' does not work on your system
 and you are getting System::Yumgroup resources created on every Puppet run</p>
+
+<p>Note: By default the yumgroup type has a 'daily' schedule to reduce the time
+Puppet runs take - package group changes are usually rare after the host is
+first set up. This means that it will run once every 24 hours. You override
+this by supplying your own schedule parameter - see system::schedules to create
+your own custom schedules.</p>
 
 <h2>yumrepos</h2>
 
