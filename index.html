@@ -109,10 +109,21 @@ system::yumgroups::schedule: 'never'
 
 <h2>augeas</h2>
 
-<p>Apply changes to files using the augeas tool.  This enables configuration file
-changes to be made without writing new classes.</p>
+<p>Apply changes to files using the augeas tool.  This enables simple
+configuration file changes to be made without writing new classes.</p>
 
 <p>Example 1:</p>
+
+<pre><code>system::augeas:
+  'ntp':
+    context: '/files/etc/ntp.conf'
+    changes:
+      - 'set server[1] 0.uk.pool.ntp.org'
+      - 'set server[2] 1.uk.pool.ntp.org'
+      - 'set server[3] 2.uk.pool.ntp.org'
+</code></pre>
+
+<p>Example 2:</p>
 
 <pre><code>system::augeas:
   'test1':
@@ -122,11 +133,11 @@ changes to be made without writing new classes.</p>
     onlyif:  'match other_value size &gt; 0'
 </code></pre>
 
-<p>Example 2:</p>
+<p>Example 3:</p>
 
 <pre><code>system::augeas:
   'jboss_conf':
-    content: '/files'
+    context: '/files'
     changes:
       - 'set etc/jbossas/jbossas.conf/JBOSS_IP $ipaddress'
       - 'set etc/jbossas/jbossas.conf/JAVA_HOME /usr'
@@ -178,14 +189,35 @@ changes to be made without writing new classes.</p>
 
 <h2>facts</h2>
 
-<p>Set custom facts</p>
+<p>Set custom facts using the facter_dot_d Facter plugin that loads facts from
+/etc/facter/facts.d
+(<a href="https://github.com/ripienaar/facter-facts/tree/master/facts-dot-d">https://github.com/ripienaar/facter-facts/tree/master/facts-dot-d</a>)</p>
 
 <p>Example configuration:</p>
 
 <pre><code>system::facts:
   location:
     value: 'London'
+  ntpq:
+    type:  'script'
+    value: "#!/bin/bash\nprintf ntpq=\n/usr/sbin/ntpq -p | /usr/bin/tail -1\n"
 </code></pre>
+
+<p>These facts can be queried on a host using 'facter -p':</p>
+
+<pre><code>$ facter -p location
+London
+$ facter -p ntpq
+*10.43.4.8       158.43.128.33    2 u  820 1024  377    0.538    0.155   0.048
+</code></pre>
+
+<p>Set:</p>
+
+<pre><code>system::facts::cleanold: true
+</code></pre>
+
+<p>to remove facts from the old locations under /etc/profile.d and in
+/etc/sysconfig/puppet.</p>
 
 <h2>files</h2>
 
