@@ -57,6 +57,10 @@
 <li>
 <em>mounts</em>: manage entries in /etc/fstab</li>
 <li>
+<em>network</em>: configure basic networking and dns</li>
+<li>
+<em>ntp</em>: configure NTP servers in /etc/ntp.conf</li>
+<li>
 <em>packages</em>: manage system packages</li>
 <li>
 <em>schedules</em>: determine when resource config should not be applied and how often</li>
@@ -244,8 +248,8 @@ $ facter -p ntpq
     content: "Authorised access only\nIf unauthorised log off now or face prosecution\n"
 </code></pre>
 
-<p>Note: Use double-quotes with content if it contains embedded newlines (\n) or
-tabs (\t).  Normaly you will also want a terminating newline.</p>
+<p>Note: Use double-quotes if your content contains embedded newlines (\n) or tabs
+(\t).  Normaly you will also want a terminating newline.</p>
 
 <h2>groups</h2>
 
@@ -254,18 +258,26 @@ tabs (\t).  Normaly you will also want a terminating newline.</p>
 <p>Example configuration:</p>
 
 <pre><code>system::groups:
-  'keith':
+  'sysadmins':
     ensure: 'present'
-    gid:    '500'
-  'fred':
-    gid:    '503'
+    gid:    '1500'
+  'ops':
+    gid:    '1503'
+system::groups::realize:
+  - 'keith'
 </code></pre>
 
 <p>Defaults:</p>
 
 <ul>
 <li>ensure: present</li>
-</ul><h2>hosts</h2>
+</ul><p>By default virtual group resources are created that must then be realized.  To
+create real resources instead (as with earlier versions of this module) use:</p>
+
+<pre><code>system::groups::true: 'true'
+</code></pre>
+
+<h2>hosts</h2>
 
 <p>Manage entries in /etc/hosts</p>
 
@@ -346,6 +358,49 @@ tabs (\t).  Normaly you will also want a terminating newline.</p>
 </ul><p>Note: These resources are created last so any required users, groups or mount
 point directories have a chance to be created first.</p>
 
+<h2>network</h2>
+
+<p>Configure basic networking: set hostname, enable/disable zeroconf/IPv6, set the default route,
+configure interfaces and their static routes, configure nameserver resolvers and domains</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::network::hostname: 'puppet.domain.com'
+system::network::gateway:  '10.7.0.1'
+system::network::ipv6:     'false'
+system::network::zeroconf: 'false'
+system::network::dns:
+  nameservers: [ '10.7.96.2', '10.7.96.2' ]
+  domains:     [ 'domain.com', 'sub.domain.com' ]
+system::network::interfaces:
+  eth0:
+    ipaddress: '10.7.96.21'
+    netmask:   '255.255.240.0'
+    routes:
+      '10.0.0.0/8':
+        via: '10.16.0.250'
+</code></pre>
+
+<h2>ntp</h2>
+
+<p>Manage NTP servers in /etc/ntp.conf</p>
+
+<p>Example 1:</p>
+
+<pre><code>system::ntp::iburst:  'true'
+system::ntp::servers: [ 'ntp1.example.com' ]
+</code></pre>
+
+<p>Example 2:</p>
+
+<pre><code>system::ntp::iburst:  'true'
+system::ntp::country: 'uk'
+</code></pre>
+
+<p>See <a href="https://github.com/erwbgy/puppet-ntp">https://github.com/erwbgy/puppet-ntp</a> for more details</p>
+
+<p>Note: The NTP algorithm does not work properly with two NTP servers.</p>
+
 <h2>packages</h2>
 
 <p>Manage system packages</p>
@@ -421,7 +476,23 @@ we defined above.</p>
 </ul><p>and the system::schedule class defines another called <em>always</em> that schedules
 the resource on every Puppet run.</p>
 
-<h2>services</h2>
+<h2>selbooleans</h2>
+
+<p>Manages SELinux booleans</p>
+
+<p>Example configuration:</p>
+
+<pre><code>system::selbooleans:
+  'httpd_can_network_connect':
+    value: 'on'
+    persistent: 'true'
+</code></pre>
+
+<p>Defaults:</p>
+
+<ul>
+<li>persistent: false</li>
+</ul><h2>services</h2>
 
 <p>Manage system services</p>
 
@@ -551,6 +622,8 @@ system::sysconfig::selinux:
     gid:       '503'
     home:      '/home/fred'
     managehome: true
+system::users::realize:
+  - 'keith'
 </code></pre>
 
 <p>Defaults:</p>
@@ -558,7 +631,13 @@ system::sysconfig::selinux:
 <ul>
 <li>ensure: present</li>
 <li>shell:  /bin/bash</li>
-</ul><h2>yumgroups</h2>
+</ul><p>By default virtual user resources are created that must then be realized.  To
+create real resources instead (as with earlier versions of this module) use:</p>
+
+<pre><code>system::users::real: 'true'
+</code></pre>
+
+<h2>yumgroups</h2>
 
 <p>Manage system package groups</p>
 
