@@ -2,7 +2,7 @@ class system::selbooleans (
   $config   = undef,
   $schedule = $::system::schedule,
 ) {
-  if $::selinux == "true" {
+  if str2bool("$::selinux") {
     $defaults = {
       schedule => $schedule,
     }
