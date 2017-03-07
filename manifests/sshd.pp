@@ -1,10 +1,10 @@
 class system::sshd (
   $config   = undef,
-  $schedule = $::system::schedule,
+  $sys_schedule = $::system::sys_schedule,
   $sync_host_keys = true
 ) {
   $defaults = {
-    schedule => $schedule,
+    schedule => $sys_schedule,
   }
   if $config {
     include augeasproviders

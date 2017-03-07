@@ -1,7 +1,7 @@
 class system::facts (
   $config   = undef,
   $cleanold = false,
-  $schedule = $::system::schedule,
+  $sys_schedule = $::system::sys_schedule,
 ) {
   if ! defined(File['/etc/facter']) {
     file { '/etc/facter':
@@ -20,7 +20,6 @@ class system::facts (
       require => File['/etc/facter'],
     }
   }
-  include concat::setup
   concat { '/etc/facter/facts.d/system_facts.yaml':
     owner   => 'root',
     group   => 'root',
@@ -33,7 +32,7 @@ class system::facts (
     order    => '01',
   }
   $defaults = {
-    schedule => $schedule,
+    schedule => $sys_schedule,
   }
   if $config {
     create_resources('system::fact', $config, $defaults)
@@ -55,7 +54,7 @@ class system::facts (
     exec { "fact-remove-sysconfig-puppet":
       command  => "/usr/bin/perl -pi -e 's/^\s*#?\s*(export )?FACTER_.*?=.*?$//' /etc/sysconfig/puppet",
       onlyif   => '/bin/grep -q FACTER_ /etc/sysconfig/puppet',
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
   }
 }

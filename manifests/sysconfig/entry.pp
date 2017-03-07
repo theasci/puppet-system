@@ -3,14 +3,14 @@ define system::sysconfig::entry (
   $var,
   $val,
   $nudge = [],
-  $schedule = undef,
+  $sys_schedule = undef,
 ) {
   if $val {
     augeas { "system-sysconfig-${file}-${var}":
       context  => "/files/etc/sysconfig/${file}",
       changes  => "set ${var} \"${val}\"",
       notify   => $nudge,
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
   }
 }
