@@ -10,9 +10,9 @@ define system::fact (
   if is_array($value) {
     $resource_name = "${var}%index%"
     $parameters = {
-      schedule => $sys_schedule,
-      type     => $type,
-      ttl      => $ttl,
+      'schedule' => $sys_schedule,
+      'type'     => $type,
+      'ttl'      => $ttl,
     }
     $dynamic_parameters = {
       'value' => '%s'
