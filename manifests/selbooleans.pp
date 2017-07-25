@@ -1,10 +1,10 @@
 class system::selbooleans (
   $config   = undef,
-  $schedule = $::system::schedule,
+  $sys_schedule = $::system::sys_schedule,
 ) {
   if str2bool("$::selinux") {
     $defaults = {
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     if $config {
       create_resources(selboolean, $config, $defaults)

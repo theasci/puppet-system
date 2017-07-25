@@ -1,6 +1,6 @@
 class system::sysconfig::i18n (
   $config   = undef,
-  $schedule = undef,
+  $sys_schedule = undef,
 ) {
   if $config {
     $i18n = $config
@@ -10,19 +10,19 @@ class system::sysconfig::i18n (
   }
   if $i18n {
     system::sysconfig::header { 'i18n':
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'i18n-lang':
       file     => 'i18n',
       var      => 'LANG',
       val      => $i18n['lang'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'i18n-sysfont':
       file     => 'i18n',
       var      => 'SYSFONT',
       val      => $i18n['sysfont'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
   }
 }

@@ -1,10 +1,10 @@
 class system::sshd (
   $config   = undef,
-  $schedule = $::system::schedule,
+  $sys_schedule = $::system::sys_schedule,
   $sync_host_keys = true
 ) {
   $defaults = {
-    schedule => $schedule,
+    schedule => $sys_schedule,
   }
   if $config {
     include augeasproviders
@@ -22,7 +22,7 @@ class system::sshd (
     # and https://wiki.xkyle.com/Managing_SSH_Keys_With_Puppet
 
     # export host key
-    $hostonly = regsubst($::fqdn, "\.${::domain}$", '')
+    $hostonly = regsubst($::fqdn, "\\.${::domain}$", '')
     $host_aliases = [ $::ipaddress, $hostonly ]
     @@sshkey { $::fqdn:
       ensure       => present,

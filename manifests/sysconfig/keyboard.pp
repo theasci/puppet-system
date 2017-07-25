@@ -1,6 +1,6 @@
 class system::sysconfig::keyboard (
   $config   = undef,
-  $schedule = undef,
+  $sys_schedule = undef,
 ) {
   if $config {
     $keyboard = $config
@@ -10,31 +10,31 @@ class system::sysconfig::keyboard (
   }
   if $keyboard {
     system::sysconfig::header { 'keyboard':
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'keyboard-keytable':
       file  => 'keyboard',
       var   => 'KEYTABLE',
       val   => $keyboard['keytable'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'keyboard-model':
       file  => 'keyboard',
       var   => 'MODEL',
       val   => $keyboard['model'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'keyboard-layout':
       file  => 'keyboard',
       var   => 'LAYOUT',
       val   => $keyboard['layout'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
     system::sysconfig::entry { 'keyboard-keyboardtype':
       file  => 'keyboard',
       var   => 'KEYBOARDTYPE',
       val   => $keyboard['keyboardtype'],
-      schedule => $schedule,
+      schedule => $sys_schedule,
     }
   }
 }
